@@ -45,17 +45,56 @@
  *   // => [{ rating: 5 }, { rating: 3 }]
  */
 export function createFilter(field, operator, value) {
-  // Your code here
+  return function (obj) {
+    if (!obj || !(field in obj)) return false;
+    const fieldValue = obj[field];
+    switch (operator) {
+      case ">":
+        return fieldValue > value;
+      case "<":
+        return fieldValue < value;
+      case ">=":
+        return fieldValue >= value;
+      case "<=":
+        return fieldValue <= value;
+      case "===":
+        return fieldValue === value;
+      default:
+        return false;
+    }
+  };
 }
 
 export function createSorter(field, order = "asc") {
-  // Your code here
+  return function (a, b) {
+    if (!(field in a) || !(field in b)) return 0;
+    const valA = a[field];
+    const valB = b[field];
+    if (valA < valB) return order === "asc" ? -1 : 1;
+    if (valA > valB) return order === "asc" ? 1 : -1;
+    return 0;
+  };
 }
 
 export function createMapper(fields) {
-  // Your code here
+  return function (obj) {
+    if (!obj || !Array.isArray(fields)) return {};
+
+    return fields.reduce((acc, key) => {
+      if (key in obj) {
+        acc[key] = obj[key];
+      }
+      return acc;
+    }, {});
+  };
 }
 
 export function applyOperations(data, ...operations) {
-  // Your code here
+  if (!Array.isArray(data)) return [];
+  return operations.reduce((result, operation) => {
+    if (typeof operation === "function") {
+      return operation(result);
+    }
+    return result;
+  }, data);
 }
