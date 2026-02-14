@@ -105,13 +105,13 @@ export function isPalindrome(str) {
 
 export function generatePattern(n) {
   if (!Number.isInteger(n) || n <= 0) return [];
+  const buildAscending = (k) => {
+    if (k === 0) return [];
+    const prev = buildAscending(k - 1);
+    return [...prev, repeatChar("*", k)];
+  };
+  const ascending = buildAscending(n);
+  const descending = buildAscending(n - 1).reverse();
 
-  if (n === 1) return ["*"];
-
-  const smallerPattern = generatePattern(n - 1);
-  const currentLine = repeatChar("*", n);
-
-  const mirrored = [...smallerPattern].reverse(); // copy first
-
-  return [...smallerPattern, currentLine, ...mirrored];
+  return [...ascending, ...descending];
 }
